@@ -66,5 +66,10 @@ class DateTimeSinceEpoch(PluginBase):
 
 #TODO: expand with more dynamic methods
 class ScorePlug(PluginBase):
-    def runBatchInference(self):
+    datadigestDir = str(Settings.SETTINGS.get("score","datadigestDir"))
+    pyPath = "-Dpython.path=" + str(datadigestDir)
+    jythonExe = "./score/JythonBI.py"
+        
+    def runBatchInference(self, inputObject):
+        #print "Hello runBatchInference"
         pass
