@@ -20,6 +20,7 @@ from standardize import Standardize
 from transform import Transform
 from partition import Partition
 from describe import Describe
+from context import Context
 
 from score import Score
 
@@ -57,13 +58,15 @@ class Collector(DatagramServer):
         #create tool instances
         self.interface = Interface()
         self.parse = Parse()
+        self.context = Context()
         self.describe = Describe()
         self.standardize = Standardize()
         self.transform = Transform()
         self.partition = Partition()
         
         self.q = Queue()
-        self.inWindow = False
+        
+        self.inWindow = settings.SETTINGS.get("collector","inWindow")
         
         self.score = Score()
         #TODO: move csv name to config
@@ -87,6 +90,7 @@ class Collector(DatagramServer):
         try:
             for record in interfacedData:
                 self.parse.run(record)
+                self.context.run(record)
                 self.describe.run(record)
                 #push the record onto the queue until window 
                 if not (self.inWindow):
@@ -110,7 +114,7 @@ class Collector(DatagramServer):
                     self.partition.run(record)
                     self.csv.writeRow(self.csv.format(record))
                     
-                    self.score.run(record)
+                    #self.score.run(record)
                     
         except Exception as e:
             self.logger.error("Interfaced data is not iterable %s"%(str(e)))

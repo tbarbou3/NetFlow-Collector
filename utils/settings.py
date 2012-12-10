@@ -28,7 +28,11 @@ class settings(object):
         self.config.read(CONFIGFILE)
         
     def getlist(self,option, sep=',', chars=None):
-        return [ chunk.strip(chars) for chunk in option.split(sep) ]
+        try:
+            return [ chunk.strip(chars) for chunk in option.split(sep) ]
+        except Exception as e:
+            self.logger.warn("Config Error in getlist")
+            return None
     
     def get(self,section,key):
         try:
