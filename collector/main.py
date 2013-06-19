@@ -50,10 +50,10 @@ class Collector(DatagramServer):
         self.logger.debug( "Gevent Version %s"%gevent.__version__)
         
         #TODO: move output file name to config
-        #fname = "./NetFlow.%s.bin"%str(time.time()*100000)
+        fname = "./NetFlow.%s.bin"%str(time.time()*1000000)
         
         #WARN: might want to remove this after testing
-        #self.out = open(fname,"wb")
+        self.out = open(fname,"wb")
         
         #create tool instances
         self.interface = Interface()
@@ -75,23 +75,27 @@ class Collector(DatagramServer):
         return super(Collector,self).__init__(args)
     
     def done(self):
-        #self.out.close()
+        self.out.close()
         #really important to call del on the csv obj to ensure it closes correctly
         del self.csv
     
     def handle(self, rawData, address):
         Collector.x += 1
-        #print '%s %s: got %r' % (Collector.x, address[0], data)  
-        #self.out.write(rawData)
+        print '%s %s: got %r' % (Collector.x, address[0], rawData)  
+        self.out.write(rawData)
         
         interfacedData = self.interface.run(rawData)
+        self.logger.debug("Interface: %s"%(repr(interfacedData)))
         #once the rawData is "interfaced" we are passing it around by reference
         # interfaced data must be iterable
         try:
             for record in interfacedData:
                 self.parse.run(record)
+                self.logger.debug("Parse: %s"%(repr(record)))
                 self.context.run(record)
+                self.logger.debug("Context: %s"%(repr(record)))
                 self.describe.run(record)
+                self.logger.debug("Describe: %s"%(repr(record)))
                 #push the record onto the queue until window 
                 if not (self.inWindow):
                     self.q.put(record)
@@ -110,8 +114,11 @@ class Collector(DatagramServer):
                             self.q.task_done()
                 else:
                     self.standardize.run(record)
+                    self.logger.debug("Standardize: %s"%(repr(record)))
                     self.transform.run(record)
+                    self.logger.debug("Transform: %s"%(repr(record)))
                     self.partition.run(record)
+                    self.logger.debug("Partition: %s"%(repr(record)))
                     self.csv.writeRow(self.csv.format(record))
                     
                     #self.score.run(record)
@@ -121,10 +128,10 @@ class Collector(DatagramServer):
 
 if __name__ == '__main__':
     #TODO: move IP and port to config
-    server = Collector(("0.0.0.0",6005))
+    server = Collector(("0.0.0.0",6006))
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print "Terminating Collector"
+        #print "Terminating Collector"
         server.done()
         server.stop()
