@@ -21,6 +21,7 @@ from transform import Transform
 from partition import Partition
 from describe import Describe
 from context import Context
+from output import Output
 
 from score import Score
 
@@ -72,6 +73,8 @@ class Collector(DatagramServer):
         #TODO: move csv name to config
         self.csv = CSV("output.csv")
         
+        self.output = Output()
+        
         return super(Collector,self).__init__(args)
     
     def done(self):
@@ -111,6 +114,7 @@ class Collector(DatagramServer):
                             self.transform.run(item)
                             self.partition.run(item)
                             self.csv.writeRow(self.csv.format(item))
+                            self.output.run(item)
                             self.q.task_done()
                 else:
                     self.standardize.run(record)
@@ -120,6 +124,7 @@ class Collector(DatagramServer):
                     self.partition.run(record)
                     self.logger.debug("Partition: %s"%(repr(record)))
                     self.csv.writeRow(self.csv.format(record))
+                    self.output.run(record)
                     
                     #self.score.run(record)
                     

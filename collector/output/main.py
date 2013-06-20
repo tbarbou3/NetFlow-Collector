@@ -7,10 +7,10 @@ from collector.base import PlugableBase
 
 import utils.settings as Settings
 
-class Transform(PlugableBase):
+class Output(PlugableBase):
     def __init__(self):
         self.stage = "output"
-        return super(Transform,self).__init__()
+        return super(Output,self).__init__()
 
     def run(self,inputObject):
         #TODO: need a driver for the parsing routine based on the way that the netflow record is laid out
