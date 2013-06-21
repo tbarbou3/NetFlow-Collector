@@ -14,7 +14,7 @@ from Queue import Queue
 import logging
 
 from interface import Interface
-from outputcsv import CSV
+#from outputcsv import CSV
 from parse import Parse
 from standardize import Standardize
 from transform import Transform
@@ -54,7 +54,7 @@ class Collector(DatagramServer):
         fname = "./NetFlow.%s.bin"%str(time.time()*1000000)
         
         #WARN: might want to remove this after testing
-        self.out = open(fname,"wb")
+        #self.out = open(fname,"wb")
         
         #create tool instances
         self.interface = Interface()
@@ -71,21 +71,22 @@ class Collector(DatagramServer):
         
         self.score = Score()
         #TODO: move csv name to config
-        self.csv = CSV("output.csv")
+        #self.csv = CSV("output.csv")
         
         self.output = Output()
         
         return super(Collector,self).__init__(args)
     
     def done(self):
-        self.out.close()
+        pass
+        #self.out.close()
         #really important to call del on the csv obj to ensure it closes correctly
-        del self.csv
+        #del self.csv
     
     def handle(self, rawData, address):
         Collector.x += 1
-        print '%s %s: got %r' % (Collector.x, address[0], rawData)  
-        self.out.write(rawData)
+        #print '%s %s: got %r' % (Collector.x, address[0], rawData)  
+        #self.out.write(rawData)
         
         interfacedData = self.interface.run(rawData)
         self.logger.debug("Interface: %s"%(repr(interfacedData)))
@@ -113,7 +114,7 @@ class Collector(DatagramServer):
                             self.standardize.run(item)
                             self.transform.run(item)
                             self.partition.run(item)
-                            self.csv.writeRow(self.csv.format(item))
+                            #self.csv.writeRow(self.csv.format(item))
                             self.output.run(item)
                             self.q.task_done()
                 else:
@@ -123,7 +124,7 @@ class Collector(DatagramServer):
                     self.logger.debug("Transform: %s"%(repr(record)))
                     self.partition.run(record)
                     self.logger.debug("Partition: %s"%(repr(record)))
-                    self.csv.writeRow(self.csv.format(record))
+                    #self.csv.writeRow(self.csv.format(record))
                     self.output.run(record)
                     
                     #self.score.run(record)

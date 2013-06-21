@@ -10,4 +10,5 @@ class MySql(PluginBase):
     
     def run(self,inputObject):
         #do something with inputObject
+        import pdb; pdb.set_trace();
         pass

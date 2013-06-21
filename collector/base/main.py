@@ -5,6 +5,7 @@ class PlugableBase(object):
    
     def load_modules(self,path):       
         mods = {}
+        
         if path:
             dir_list = os.listdir(path)
             for fname in dir_list:

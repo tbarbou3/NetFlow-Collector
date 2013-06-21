@@ -14,5 +14,6 @@ class Interface(PlugableBase):
     def run(self,inputObject):
         #HACK: this assumes 1 plugin for the interface
         #        this needs to be fixed
+
         for key in self.modInstances:
             return self.modInstances[key].run(inputObject)
