@@ -5,7 +5,7 @@ from geventwebsocket.handler import WebSocketHandler
 
 class WebSocket(PluginBase):
     def __init__(self):
-        server = pywsgi.WSGIServer(("", 8000), self.websocket_app,
+        server = pywsgi.WSGIServer(("", 9081), self.websocket_app,
             handler_class=WebSocketHandler)
         server.start()
         
