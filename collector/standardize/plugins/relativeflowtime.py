@@ -13,6 +13,9 @@ class RelativeFlowTime(DateTimeSinceEpoch):
         Check SoftFlowd. Does not seem to be TimeSinceEpoch. Ranges are too big and everything is in year 2073
         Same packets generate different times when rerun; Is this what we want?
     '''
+    def __init__(self):
+        self.pluginName = __name__
+        super(RelativeFlowTime,self).__init__()
     def run(self,inputObject):
         # print "endtime =  %s"%self.getDateTime(inputObject.end_time)
         # print "starttime =  %s"%self.getDateTime(inputObject.start_time)

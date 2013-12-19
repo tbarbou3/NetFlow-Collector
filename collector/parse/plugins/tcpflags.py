@@ -13,7 +13,10 @@ class TcpFlags(PluginBase):
     SYN: The TCP SYN flag indicates a request to establish a connection.
     FIN: if this flag is set to 1 the connection is interrupted.
     '''
-    def __init__(self):       
+    def __init__(self):
+
+        self.pluginName = __name__
+        super(TcpFlags,self).__init__()
         self.flags = ["FIN","SYN","RST","PSH","ACK","URG","ECE","CWR"]
         
     def run(self,inputObject):

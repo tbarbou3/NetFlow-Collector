@@ -48,13 +48,13 @@ class Collector(DatagramServer):
         # add ch to logger
         self.logger.addHandler(ch)        
         self.logger.debug( "Starting Collector process in %s"%os.getcwd())
-        self.logger.debug( "Gevent Version %s"%gevent.__version__)
+        #self.logger.debug( "Gevent Version %s"%gevent.__version__)
         
         #TODO: move output file name to config
-        fname = "./NetFlow.%s.bin"%str(time.time()*1000000)
+        fname = "./NetFlow.%d.bin"%int(time.time())
         
         #WARN: might want to remove this after testing
-        #self.out = open(fname,"wb")
+        self.out = open(fname,"wb")
         
         #create tool instances
         self.interface = Interface()
@@ -78,34 +78,34 @@ class Collector(DatagramServer):
         return super(Collector,self).__init__(args)
     
     def done(self):
-        pass
-        #self.out.close()
+        #pass
+        self.out.close()
         #really important to call del on the csv obj to ensure it closes correctly
         #del self.csv
     
     def handle(self, rawData, address):
         Collector.x += 1
         #print '%s %s: got %r' % (Collector.x, address[0], rawData)  
-        #self.out.write(rawData)
+        self.out.write(rawData)
         
         interfacedData = self.interface.run(rawData)
-        self.logger.debug("Interface: %s"%(repr(interfacedData)))
+        #self.logger.debug("Interface: %s"%(repr(interfacedData)))
         #once the rawData is "interfaced" we are passing it around by reference
         # interfaced data must be iterable
         try:
             for record in interfacedData:
                 self.parse.run(record)
-                self.logger.debug("Parse: %s"%(repr(record)))
+                #self.logger.debug("Parse: %s"%(repr(record)))
                 self.context.run(record)
-                self.logger.debug("Context: %s"%(repr(record)))
+                #self.logger.debug("Context: %s"%(repr(record)))
                 self.describe.run(record)
-                self.logger.debug("Describe: %s"%(repr(record)))
+                #self.logger.debug("Describe: %s"%(repr(record)))
                 #push the record onto the queue until window 
                 if not (self.inWindow):
                     self.q.put(record)
                     #self.logger.debug("adding record to queue %s"%(repr(record)))
                     if (self.q.qsize() == int(settings.SETTINGS.get("collector","describeWindow"))):
-                        self.logger.debug("Describe Window of %s records met, Begin Processing queue"%settings.SETTINGS.get("collector","describeWindow"))
+                        #self.logger.debug("Describe Window of %s records met, Begin Processing queue"%settings.SETTINGS.get("collector","describeWindow"))
                         self.inWindow = True
                         
                         while not self.q.empty():
@@ -119,11 +119,11 @@ class Collector(DatagramServer):
                             self.q.task_done()
                 else:
                     self.standardize.run(record)
-                    self.logger.debug("Standardize: %s"%(repr(record)))
+                    #self.logger.debug("Standardize: %s"%(repr(record)))
                     self.transform.run(record)
-                    self.logger.debug("Transform: %s"%(repr(record)))
+                    #self.logger.debug("Transform: %s"%(repr(record)))
                     self.partition.run(record)
-                    self.logger.debug("Partition: %s"%(repr(record)))
+                    #self.logger.debug("Partition: %s"%(repr(record)))
                     #self.csv.writeRow(self.csv.format(record))
                     self.output.run(record)
                     

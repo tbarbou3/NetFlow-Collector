@@ -12,6 +12,8 @@ class GeoIP(PluginBase):
     missingValue = "UNK"
     
     def __init__(self):
+        self.pluginName = __name__
+        super(GeoIP,self).__init__()
         #print( "GeoIP working dir in %s"%os.getcwd())
         self.db = pygeoip.Database(settings.SETTINGS.get("geoip","database"))
     def run(self,inputObject):

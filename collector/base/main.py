@@ -17,8 +17,9 @@ class PlugableBase(object):
         return mods
 
     def __init__(self, *args, **kwargs):
-                # create logger
-        self.logger = logging.getLogger(__name__)
+        # create logger
+        #print(__name__)
+        self.logger = logging.getLogger(self.stage)
         self.logger.setLevel(logging.DEBUG)
         
         # create console handler and set level to debug
@@ -48,6 +49,7 @@ class PlugableBase(object):
         self.modInstances={}
         for key in self.mods:
             self.modInstances[key]= self.mods[key]()
+            #print(key)
         self.logger.debug("Instances %s"%str(self.modInstances))
     def run(self,dataObject):
         for key in self.modInstances:
@@ -57,8 +59,23 @@ class PlugableBase(object):
 class PluginBase(object):
     def __init__(self):
         #override this
-        #implement some init code here
-        #print "PluginBase init"
+        # create logger
+        #print(__name__)
+        self.logger = logging.getLogger(self.pluginName)
+        self.logger.setLevel(logging.DEBUG)
+
+        # create console handler and set level to debug
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+
+        # create formatter
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        # add formatter to ch
+        ch.setFormatter(formatter)
+
+        # add ch to logger
+        self.logger.addHandler(ch)
         pass
     def run(self, *args, **kwargs):
         #override this
