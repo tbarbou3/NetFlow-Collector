@@ -11,7 +11,9 @@ class SrcPort(PluginBase):
     # ports = Settings.SETTINGS.getlist(Settings.SETTINGS.get("transform","srcports"))
     ports = [53, 80, 110, 113, 443]
     # print " Approved Source Ports: %s" %ports
-    
+    def __init__(self):
+        self.pluginName = __name__
+        super(SrcPort,self).__init__()
     def run(self,inputObject):
         if(inputObject.src_port in SrcPort.ports):
             # Do nothing (for now)

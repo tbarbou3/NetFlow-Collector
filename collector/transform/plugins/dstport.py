@@ -12,7 +12,9 @@ class DstPort(PluginBase):
     # ports = Settings.SETTINGS.getlist(Settings.SETTINGS.get("transform","srcports"))
     ports = [53, 80, 110, 25, 443]
     # print " Approved Source Ports: %s" %ports
-    
+    def __init__(self):
+        self.pluginName = __name__
+        super(DstPort,self).__init__()
     def run(self,inputObject):
         if(inputObject.dst_port in DstPort.ports):
             # Do nothing (for now)

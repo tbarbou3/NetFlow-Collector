@@ -1,7 +1,9 @@
 from collector.base import DateTimeSinceEpoch
 
 class StartTime(DateTimeSinceEpoch):
-
+    def __init__(self):
+        self.pluginName = __name__
+        super(StartTime,self).__init__()
     def run(self,inputObject):
         #inputObject is a Flow Record at this point
         try:

@@ -20,6 +20,6 @@ class Kafka(PluginBase):
         r = self._fmt(inputObject)
         self.producer.send_messages(r)
     def _fmt(self,inputObject):
-        r = {key:getattr(inputObject,key) for key in Settings.SETTINGS.getlist(Settings.SETTINGS.get("csv","fieldNames"))}
+        r = {key:getattr(inputObject,key) for key in Settings.SETTINGS.getlist(Settings.SETTINGS.get("output","fieldNames"))}
         self.logger.debug("Sending: %s"%(json.dumps(r)))
         return json.dumps(r)
