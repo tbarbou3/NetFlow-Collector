@@ -1,1 +1,2 @@
 To run the Collector: /NetFlowIngestion/collector$ PYTHONPATH=../ python main.py
+To run the Sensor: sudo softflowd - i eth0 -n 192.168.100.124:6006 -v5 -D
