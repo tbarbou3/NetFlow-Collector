@@ -1,0 +1,5 @@
+#! /bin/bash
+cat ~/toolbots_logo.txt
+cd collector
+PYTHONPATH=../ python main.py $1 $2
+
